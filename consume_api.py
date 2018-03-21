@@ -44,6 +44,10 @@ def parse_and_store():
     return ret_val
 
 
-def run():
+def run(ques):
     parse_and_store()
-    cosine.tf_idf(read_from_csv())
+    print(cosine.tf_idf(read_from_csv(), check_with=ques))
+
+
+input_ques = input('Enter Question? \n')
+run(input_ques)

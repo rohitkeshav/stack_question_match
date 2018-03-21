@@ -8,6 +8,7 @@ from scipy.spatial import distance
 def tf_idf(docs, check_with=None):
     # Process all documents to get list of token list
 
+    # TODO: remove this hack
     if check_with is not None:
         docs.insert(0, check_with)
 

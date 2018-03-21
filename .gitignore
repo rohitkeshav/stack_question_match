@@ -3,3 +3,4 @@ build
 add
 .idea
 __pycache__
+data_set.csv
