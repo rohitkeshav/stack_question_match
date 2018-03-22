@@ -29,6 +29,7 @@ def __question(tag, up_votes):
         yield question_object
 
 
+# Parse API and store in CSV
 def parse_and_store():
     ret_val = list()
     n_row = __question('python', 20)

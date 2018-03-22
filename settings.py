@@ -5,7 +5,6 @@ Base assumption: All titles are questions
 Parts Implemented:
     - Get data from stacks API (currently sticking to just the title)
     - Storing in CSV
-TODO:
     - Clean both columns, tokenize to a usable format
 """
 

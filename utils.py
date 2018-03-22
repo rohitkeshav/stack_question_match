@@ -10,6 +10,7 @@ from settings import BASE_DIR
 from nltk.corpus import stopwords
 
 
+# tokenize a doc
 def get_doc_tokens(doc):
     stop_words = stopwords.words('english')
 

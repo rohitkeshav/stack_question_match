@@ -5,6 +5,7 @@ from utils import get_doc_tokens
 from scipy.spatial import distance
 
 
+# TF_IDF on the list of docs
 def tf_idf(docs, check_with=None):
     # Process all documents to get list of token list
 
