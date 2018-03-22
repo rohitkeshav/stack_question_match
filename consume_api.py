@@ -34,17 +34,19 @@ def parse_and_store():
     ret_val = list()
     n_row = __question('python', 20)
 
-    header_list = ['title', 'tags', 'username', 'creation_date', 'up_votes']
+    header_list = ['title', 'tags', 'creation_date', 'username', 'up_votes', 'link']
 
     while True:
         try:
             a_row = next(n_row)
+            print(a_row)
+            time.sleep(50)
 
             if a_row['is_answered']:
 
                 ret_val.append(dict(zip(header_list, [html.unescape(a_row['title']), ' '.join(a_row['tags']),
                                         time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(a_row['creation_date'])),
-                                        a_row['owner']['display_name'], a_row['score']])))
+                                        a_row['owner']['display_name'], a_row['score'], a_row['link']])))
 
         except StopIteration:
             break
