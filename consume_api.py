@@ -39,8 +39,6 @@ def parse_and_store():
     while True:
         try:
             a_row = next(n_row)
-            print(a_row)
-            time.sleep(50)
 
             if a_row['is_answered']:
 
