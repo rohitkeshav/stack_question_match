@@ -1,4 +1,4 @@
-# STACK OVERFLOW QUESTION MATCH
+# Stack Overflow Question Match
 
 Finding copies of questions on stack using their free API
 Python 3 environment

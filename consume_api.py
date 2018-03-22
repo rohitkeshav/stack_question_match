@@ -1,4 +1,3 @@
-import sys
 import html
 import time
 
@@ -10,13 +9,23 @@ from utils import store_as_csv, read_from_csv
 .csv format - title | user | up-votes | tags
 """
 
-CURRENT_MOD = sys.modules[__name__]
-
 
 def __question(tag, up_votes):
-    data = SITE.fetch('questions/', tagged=tag, sort='votes', min=up_votes, max_pages=1000)
 
-    for question_object in data['items']:
+    params = ('fromdate', 'todate')
+    set_to = [(1262347200, 1293796800), (1293883200, 1325332800),
+              (1325419200, 1357041600), (1362225600, 1393588800),
+              (1393675200, 1425211200), (1427889600, 1459512000),
+              (1459598400, 1491134400), (1491220800, 1519560000)]
+
+    data = list()
+
+    for st in set_to:
+        # time.sleep(10)
+        data.extend(SITE.fetch('questions/', tagged=tag, sort='votes', min=up_votes, max_pages=1000,
+                               **dict(zip(params, st))).get('items', []))
+
+    for question_object in data:
         yield question_object
 
 

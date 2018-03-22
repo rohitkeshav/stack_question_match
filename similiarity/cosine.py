@@ -36,7 +36,7 @@ def tf_idf(docs, check_with=None):
     similarity = 1 - distance.squareform(distance.pdist(smoothed_tf_idf, 'cosine'))
 
     # find top 5 docs similar to first one
-    similar_docs = np.argsort(similarity)[:, ::-1][0, 0:6]
+    similar_docs = np.argsort(similarity)[:, ::-1][0, 1:4]
     print('similar docs', similar_docs)
 
     # Print the top 5 similar reviews
