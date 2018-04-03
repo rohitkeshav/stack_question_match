@@ -1,4 +1,4 @@
-# Document similarity
+# Document Similarity
 
 Finding copies of questions on stack using their free API
 Python 3 environment
