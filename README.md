@@ -1,7 +1,9 @@
-# Stack Overflow Question Match
+# Document similarity
 
 Finding copies of questions on stack using their free API
 Python 3 environment
+
+<b>Currently using cosine similarity</b>
 
 Follow - 
 
