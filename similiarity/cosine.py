@@ -3,13 +3,15 @@ import pandas as pd
 
 from utils import get_doc_tokens
 from scipy.spatial import distance
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
 
 
 # TF_IDF on the list of docs
 def tf_idf(docs, check_with=None):
     # Process all documents to get list of token list
 
-    # TODO: remove this hack
+    # TODO: apparently not a hack
     if check_with is not None:
         docs.insert(0, check_with)
 
@@ -44,3 +46,7 @@ def tf_idf(docs, check_with=None):
     for idx, doc in enumerate(docs):
         if idx in similar_docs:
             print('top', idx, doc)
+
+
+def multinomial_nb():
+    pass

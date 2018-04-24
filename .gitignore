@@ -4,3 +4,5 @@ add
 .idea
 __pycache__
 data_set.csv
+get_smart.py
+get_stack.py

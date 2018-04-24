@@ -7,15 +7,22 @@ import requests
 
 from bs4 import BeautifulSoup
 from settings import BASE_DIR
+from string import punctuation
 from nltk.corpus import stopwords
+from collections import Counter
 
 
 # tokenize a doc
-def get_doc_tokens(doc):
-    stop_words = stopwords.words('english')
+def get_doc_tokens(doc, j_tokens=False):
 
-    words = [token.strip() for token in nltk.word_tokenize(doc.lower()) if
+    stop_words = stopwords.words('english')
+    mt = str.maketrans('', '', string.punctuation)
+
+    words = [token.strip() for token in nltk.word_tokenize(doc.translate(mt).lower()) if
              token.strip() not in stop_words and token.strip() not in string.punctuation]
+
+    if j_tokens:
+        return words
 
     token_count = {token: words.count(token) for token in set(words)}
 
@@ -55,3 +62,25 @@ def parse_page(url_string):
     soup = BeautifulSoup(r.text, 'html.parser')
 
     return soup.find('div', {'class': 'post-text'}).get_text()
+
+
+def tag_plus_title(filename='/data_set.csv'):
+    """
+    :param filename: file name
+    :return: list of title's appended with tags
+    """
+
+    docs = list()
+
+    with open(BASE_DIR + filename, 'r', encoding='utf-8') as f:
+        q_a = csv.DictReader(f)
+
+        jargon = ['python', 'python-3.x', 'python-2.x', 'python-2.7']
+
+        for line in q_a:
+            docs.append(line['title'] + ' ' + ' '.join([tag for tag in line['tags'].split(' ') if tag not in jargon]))
+
+    return docs
+
+
+print(tag_plus_title()[:20])
