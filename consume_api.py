@@ -22,7 +22,6 @@ def __question(tag, up_votes):
     data = list()
 
     for st in set_to:
-        # time.sleep(10)
         data.extend(SITE.fetch('questions/', tagged=tag, sort='votes', min=up_votes, max_pages=1000,
                                **dict(zip(params, st))).get('items', []))
 
@@ -56,7 +55,8 @@ def parse_and_store():
 
 
 def run(ques):
-    parse_and_store()
+    # parse_and_store()
+    # print(cosine.tf_idf(read_from_csv(), check_with=ques))
     print(cosine.tf_idf(read_from_csv(), check_with=ques))
 
 
