@@ -1,10 +1,13 @@
 import numpy as np
 import pandas as pd
 
-from utils import get_doc_tokens
+from utils import get_doc_tokens, tag_plus_title
 from scipy.spatial import distance
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+from sklearn.model_selection import train_test_split
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import metrics
 
 
 # TF_IDF on the list of docs
@@ -49,4 +52,51 @@ def tf_idf(docs, check_with=None):
 
 
 def multinomial_nb():
-    pass
+    text_data = tag_plus_title()
+
+    #  Init CountVectorizer
+    c_vect = CountVectorizer()
+
+    c_vect.fit(text_data)
+
+    # transform training data into a 'document-term matrix'
+    dtm = c_vect.transform(text_data)
+
+    dtm.toarray()
+
+    pd.DataFrame(dtm.toarray(), columns=c_vect.get_feature_names())
+
+
+def __try():
+    features = ['p_lang', 'title', 'p_num']
+    stack_data = pd.read_csv('../data_set.csv', header=None, names=features)
+
+    # define X, y
+
+    X = stack_data.title
+    y = stack_data.p_num
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=1)
+
+    # print(X_train.shape)
+    # print(X_test.shape)
+    # print(y_train.shape)
+    # print(y_test.shape)
+
+    vect = CountVectorizer()
+
+    vect.fit(X_train)
+
+    # transform training data
+    X_train_dtm = vect.transform(X_train)
+    X_train_dtm = vect.fit_transform(X_train)
+    X_test_dtm = vect.transform(X_test)
+
+    nb = MultinomialNB()
+
+    nb.fit(X_train_dtm, y_train)
+    y_pred_class = nb.predict(X_test_dtm)
+    print(metrics.accuracy_score(y_test, y_pred_class))
+
+
+__try()

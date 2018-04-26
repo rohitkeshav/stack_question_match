@@ -41,7 +41,7 @@ def read_from_csv(filename='/data_set.csv'):
 
 
 def store_as_csv(columns, lod, file_name='/data_set.csv'):
-    with open(BASE_DIR + file_name, 'w', encoding="utf-8") as f:
+    with open(BASE_DIR + file_name, 'a', encoding="utf-8") as f:
         q_a = csv.DictWriter(f, fieldnames=columns)
         q_a.writeheader()
         q_a.writerows(lod)
@@ -67,7 +67,7 @@ def parse_page(url_string):
 def tag_plus_title(filename='/data_set.csv'):
     """
     :param filename: file name
-    :return: list of title's appended with tags
+    :return: list of title's appended with tags, for better features
     """
 
     docs = list()
@@ -81,6 +81,3 @@ def tag_plus_title(filename='/data_set.csv'):
             docs.append(line['title'] + ' ' + ' '.join([tag for tag in line['tags'].split(' ') if tag not in jargon]))
 
     return docs
-
-
-print(tag_plus_title()[:20])

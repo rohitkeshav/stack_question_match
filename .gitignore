@@ -6,3 +6,4 @@ __pycache__
 data_set.csv
 get_smart.py
 get_stack.py
+cosine_similiarity.py
