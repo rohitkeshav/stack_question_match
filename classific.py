@@ -14,6 +14,7 @@ from sklearn.ensemble import RandomForestClassifier
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import cross_validate
 from sklearn.linear_model import LogisticRegression
+from nltk.tokenize import RegexpTokenizer
 from sklearn import metrics
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
@@ -79,7 +80,9 @@ def decision_tree(data):
     stemmer = SnowballStemmer('english')
     words = stopwords.words("english")
 
-    data['cleaned'] = data['title'].apply(lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
+    data['cleaned'] = data['title'].apply(lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower()) #his
+    data['cleaned'] = data['title'].apply(lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i.lower() not in words]).lower()) #mine
+
     X_train, X_test, y_train, y_test = train_test_split(data['cleaned'], data.p_lang, test_size=0.1)
 
     pipeline = Pipeline([('vect', TfidfVectorizer(ngram_range=(1, 2), stop_words="english", sublinear_tf=True)),
@@ -105,8 +108,11 @@ def __try():
     stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
-
-    X = stack_data.title
+    stemmer = SnowballStemmer('english')
+    words = stopwords.words("english")
+    X = stack_data.title.apply(
+        lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
+    #X = stack_data.title
     y = stack_data.p_num
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
@@ -128,13 +134,16 @@ def __try():
 
 
 # Linear SVC
-def _c_try():
+def _c_try(testdata = None):
     features = ['p_lang', 'title', 'p_num']
     stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
-
-    X = stack_data.title
+    stemmer = SnowballStemmer('english')
+    words = stopwords.words("english")
+    X = stack_data.title.apply(
+        lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
+    #X = stack_data.title
     y = stack_data.p_num
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
@@ -152,14 +161,21 @@ def _c_try():
     lsv.fit(X_train_dtm, y_train)
     y_pred_class = lsv.predict(X_test_dtm)
     print('hey')
+    print(stack_data.p_lang.unique())
     print(metrics.accuracy_score(y_test, y_pred_class))
 
+    if testdata:
+        testdata.title = testdata.title.apply(lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
+        print(lsv.predict(vect.fit_transform(testdata.title)))
+
     #print(X_test.shape, X_test_dtm.shape, X_train_dtm.shape, X_train.shape)
+
 
 # Random forest
 def _d_try():
     features = ['p_lang', 'title', 'p_num']
     stack_data = pd.read_csv('./data_set.csv')
+
 
     # define X, y
     X = stack_data.title
@@ -193,8 +209,13 @@ def _l_try():
 
     # define X, y
 
-    X = stack_data.title
+    stemmer = SnowballStemmer('english')
+    words = stopwords.words("english")
+    X = stack_data.title.apply(
+        lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
+    #X = stack_data.title
     y = stack_data.p_num
+
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
 
@@ -215,14 +236,17 @@ def _l_try():
     print(metrics.accuracy_score(y_test, y_pred_class))
 
 
-# logistic regression
+# Neural Nets
 def __nn_try(hidden_layer_size):
     features = ['p_lang', 'title', 'p_num']
     stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
-
-    X = stack_data.title
+    stemmer = SnowballStemmer('english')
+    words = stopwords.words("english")
+    X = stack_data.title.apply(
+        lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
+    #X = stack_data.title
     y = stack_data.p_num
 
     X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
@@ -246,10 +270,45 @@ def __nn_try(hidden_layer_size):
     print(hidden_layer_size, metrics.accuracy_score(y_test, y_pred_class))
 
 
+def _c_try_mod(testdata=None):
+
+    print('\n\n Modded SVM code')
+
+    stemmer = SnowballStemmer('english')
+    tokenizer = RegexpTokenizer(r'\w+')
+    stack_data = pd.read_csv('./data_set.csv')
 
 
-def testcase():
-    return pd.DataFrame({'title': ['how baby girl, whatcha doing tonight?']}, index=[i for i in range(len(['how baby girl, whatcha doing tonight?']))])
+    # Define X and y
+    X = stack_data.title.apply(lambda x: ' '.join(
+        [stemmer.stem(i.lower()) for i in tokenizer.tokenize(x) if i.lower() not in stopwords.words("english")]))
+    y = stack_data.p_lang
+
+    # Test and Train Split
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
+
+    vect = CountVectorizer(lowercase=True)
+    vect.fit(X_train)
+
+    X_train_dtm = vect.fit_transform(X_train)
+    X_test_dtm = vect.transform(X_test)
+
+    lsv = LinearSVC()
+    lsv.fit(X_train_dtm, y_train)
+    y_pred_class = lsv.predict(X_test_dtm)
+    print(metrics.accuracy_score(y_test, y_pred_class))
+
+    if testdata is not None:
+        testdata.title = testdata.title.apply(lambda x: ' '.join(
+            [stemmer.stem(i.lower()) for i in tokenizer.tokenize(x) if i.lower() not in stopwords.words("english")]))
+        #print(lsv.predict(vect.transform(testdata.title)))
+        #print(testdata.title.values)
+        for i, j in zip(testdata.title.values, lsv.predict(vect.transform(testdata.title))):
+            print(i, ' | predicted as : ', j)
+
+
+def testcase(stringList):
+    return pd.DataFrame({'title': stringList}, index=[i for i in range(len(stringList))])
 
 
 if __name__ == "__main__":
@@ -258,6 +317,9 @@ if __name__ == "__main__":
     print('Sample analysis -')
     # multinomial(df)
     _c_try()
+
+    s = ['What is abstract class in Java']
+    _c_try_mod(testcase(s))
     # _d_try()
     _l_try()
     __try()
