@@ -299,11 +299,11 @@ def _c_try_mod(testdata=None):
     print(metrics.accuracy_score(y_test, y_pred_class))
 
     if testdata is not None:
-        testdata.title = testdata.title.apply(lambda x: ' '.join(
+        test_case = testdata.title.apply(lambda x: ' '.join(
             [stemmer.stem(i.lower()) for i in tokenizer.tokenize(x) if i.lower() not in stopwords.words("english")]))
         #print(lsv.predict(vect.transform(testdata.title)))
         #print(testdata.title.values)
-        for i, j in zip(testdata.title.values, lsv.predict(vect.transform(testdata.title))):
+        for i, j in zip(testdata.title.values, lsv.predict(vect.transform(test_case))):
             print(i, ' | predicted as : ', j)
 
 
