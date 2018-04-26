@@ -101,7 +101,7 @@ def decision_tree(data):
 
 def __try():
     features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv', header=None, names=features)
+    stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
 
@@ -129,7 +129,7 @@ def __try():
 # Linear SVC
 def _c_try():
     features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv', header=None, names=features)
+    stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
 
@@ -153,11 +153,12 @@ def _c_try():
     print('hey')
     print(metrics.accuracy_score(y_test, y_pred_class))
 
+    #print(X_test.shape, X_test_dtm.shape, X_train_dtm.shape, X_train.shape)
 
 # Random forest
 def _d_try():
     features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv', header=None, names=features)
+    stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
     X = stack_data.title
@@ -187,7 +188,7 @@ def _d_try():
 # logistic regression
 def _l_try():
     features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv', header=None, names=features)
+    stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
 
@@ -209,7 +210,10 @@ def _l_try():
     nb.fit(X_train_dtm, y_train)
     y_pred_class = nb.predict(X_test_dtm)
     # print(nb.predict(vect.transform(testcase())))
+
     print(metrics.accuracy_score(y_test, y_pred_class))
+
+
 
 
 def testcase():
@@ -218,7 +222,7 @@ def testcase():
 
 if __name__ == "__main__":
 
-    df = pd.read_csv("data_set.csv", header=None, names=['title', 'p_lang'])
+    df = pd.read_csv("data_set.csv")
     print('Sample analysis -')
     # multinomial(df)
     _c_try()
