@@ -15,6 +15,7 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import cross_validate
 from sklearn.linear_model import LogisticRegression
 from sklearn import metrics
+from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 
 
@@ -173,15 +174,55 @@ def __logistic_regression(df):
 """
 
 
+# neural network
+def __nn_try(hidden_layer_size):
+    features = ['p_lang', 'title', 'p_num']
+    stack_data = pd.read_csv('./data_set.csv')
+
+    # define X, y
+
+    X = stack_data.title
+    y = stack_data.p_num
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
+
+    vect = CountVectorizer(lowercase=True, stop_words='english')
+
+    vect.fit(X_train)
+
+    # transform training data
+    X_train_dtm = vect.fit_transform(X_train)
+    X_test_dtm = vect.transform(X_test)
+
+    clf = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes = hidden_layer_size, random_state = 1)
+
+
+
+    clf.fit(X_train_dtm, y_train)
+    y_pred_class = clf.predict(X_test_dtm)
+    # print(nb.predict(vect.transform(testcase())))
+
+    print(hidden_layer_size, metrics.accuracy_score(y_test, y_pred_class))
+
+
 def test_case():
     return pd.DataFrame({'title': ["Does Python have a string 'contains' substring method?"]}, index=[i for i in range(len(["Does Python have a string 'contains' substring method?"]))])
 
 
-if __name__ == "__main__":
-    df = pd.read_csv("data_set.csv")
-    print('Classifiers -')
-
-    print(logistic_regression(df))
+# if __name__ == "__main__":
+#     df = pd.read_csv("data_set.csv")
+#     print('Sample analysis -')
+#     # multinomial(df)
+#     __nn_try((20))  # Pass number and size of hidden layers as tuple inputs
+#     __nn_try((40))
+#     __nn_try((20, 10))
+#     __nn_try((10, 5))
+#     __nn_try((20, 10, 5))
+#     # linear_svc(df)
+#     # decision_tree(df)
+#     print('Classifiers -')
+#
+#     print(logistic_regression(df))
     # csd = ClassifyStackData('./data_set.csv', 'title', 'p_num', [''])
 
     # print(csd.multinomial_nb())
