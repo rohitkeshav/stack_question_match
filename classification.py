@@ -18,6 +18,64 @@ from sklearn import metrics
 from sklearn.metrics import classification_report
 
 
+class ClassifyStackData:
+    # title, p_num
+    def __init__(self, fname, text, label, cval):
+        self.stack_data = pd.read_csv(fname)
+
+        self.text = text
+        self.x = self.stack_data[text]
+        self.y = self.stack_data[label]
+        self.cval = cval
+
+    def fit_data(self):
+
+        x_train, x_test, y_train, y_test = train_test_split(self.x, self.y, random_state=2)
+
+        c_vect = CountVectorizer(lowercase=True, stop_words='english')
+
+        c_vect.fit(x_train)
+
+        x_train_dtm = c_vect.fit_transform(x_train)
+        x_test_dtm = c_vect.transform(x_test)
+
+        return c_vect, x_train_dtm, x_test_dtm, y_train, y_test
+
+    def multinomial_nb(self):
+
+        nb = MultinomialNB()
+
+        return self.predict(nb)
+
+    def logistic_regression(self):
+
+        lr = LogisticRegression()
+
+        return self.predict(lr)
+
+    def linear_svc(self):
+
+        lsv = LinearSVC()
+
+        return self.predict(lsv)
+
+    def check_text(self):
+
+        if type(self.cval) == str:
+            return pd.DataFrame({self.text: [self.cval]}, index=[0])
+
+        return pd.DataFrame({self.text: self.cval}, index=[idx for idx in range(len(self.cval))])
+
+    def predict(self, c_obj):
+        vect, x_train_dtm, x_test_dtm, y_train, y_test = self.fit_data()
+
+        c_obj.fit(x_train_dtm, y_train)
+        y_pred_class = c_obj.predict(x_test_dtm)
+
+        print(c_obj.predict(vect.transform(self.check_text())))
+        print(metrics.accuracy_score(y_test, y_pred_class))
+
+
 def multinomial(data):
 
     stemmer = SnowballStemmer('english')
@@ -26,28 +84,20 @@ def multinomial(data):
     data['cleaned'] = data['title'].apply(lambda x: " ".join([stemmer.stem(i) for i in re.sub("[^a-zA-Z]", " ", x).split() if i not in words]).lower())
     X_train, X_test, y_train, y_test = train_test_split(data['cleaned'], data.p_lang, test_size=0.1)
 
-    print(TfidfVectorizer(ngram_range=(1, 2), stop_words="english", sublinear_tf=True).get_feature_names())
-    import time
-    time.sleep(500)
-
     pipeline = Pipeline([('vect', TfidfVectorizer(ngram_range=(1, 2), stop_words="english", sublinear_tf=True)),
-                         ('chi',  SelectKBest(chi2, k=200)),
                          ('clf', MultinomialNB(alpha=1, class_prior=None, fit_prior=True))])
 
     model = pipeline.fit(X_train, y_train)
 
-    vectorizer = model.named_steps['vect']
-    chi = model.named_steps['chi']
-    clf = model.named_steps['clf']
-    
     clas_pred = model.predict(X_test)
+
     print(clas_pred)
     print("accuracy score - Multinomial: " + str(model.score(X_test, y_test)))
     print('Confusion Matrix - MultinomialNB - ','\n',metrics.confusion_matrix(y_test,clas_pred))
-    print('Classification Report - MultinomialNB - ','\n',classification_report(y_test,clas_pred))
+    # print('Classification Report - MultinomialNB - ','\n',classification_report(y_test,clas_pred))
         
     
-def linear_svc(data):
+def linear_svc(data, ques):
 
     stemmer = SnowballStemmer('english')
     words = stopwords.words("english")
@@ -61,10 +111,6 @@ def linear_svc(data):
 
     model = pipeline.fit(X_train, y_train)
 
-    vectorizer = model.named_steps['vect']
-    chi = model.named_steps['chi']
-    clf = model.named_steps['clf']
-    
     clas_pred = model.predict(X_test)
     print(clas_pred)
     
@@ -72,8 +118,10 @@ def linear_svc(data):
     print('Confusion Matrix - LinearSVC - ', '\n',metrics.confusion_matrix(y_test,clas_pred))
     print('Classification Report - LinearSVC - ', '\n',classification_report(y_test,clas_pred))
 
+    return model.predict([ques])[0]
 
-def decision_tree(data):
+
+def logistic_regression(data):
     
     stemmer = SnowballStemmer('english')
     words = stopwords.words("english")
@@ -83,111 +131,21 @@ def decision_tree(data):
 
     pipeline = Pipeline([('vect', TfidfVectorizer(ngram_range=(1, 2), stop_words="english", sublinear_tf=True)),
                          ('chi',  SelectKBest(chi2, k=1500)),
-                         ('clf', DecisionTreeClassifier(random_state=0))])
+                         ('clf', LogisticRegression())])
 
     model = pipeline.fit(X_train, y_train)
-
-    vectorizer = model.named_steps['vect']
-    chi = model.named_steps['chi']
-    clf = model.named_steps['clf']
 
     clas_pred = model.predict(X_test)
     print(clas_pred)
 
-    print("accuracy score - DecisionTree: " + str(model.score(X_test, y_test)))
-    print('Confusion Matrix - Decision Tree - ','\n',metrics.confusion_matrix(y_test,clas_pred))
-    print('Classification Report - Decision Tree - ','\n',classification_report(y_test,clas_pred))
-
-
-def __try():
-    features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv')
-
-    # define X, y
-
-    X = stack_data.title
-    y = stack_data.p_num
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
-
-    vect = CountVectorizer(lowercase=True, stop_words='english')
-
-    vect.fit(X_train)
-
-    # transform training data
-    X_train_dtm = vect.fit_transform(X_train)
-    X_test_dtm = vect.transform(X_test)
-
-    nb = MultinomialNB()
-
-    nb.fit(X_train_dtm, y_train)
-    y_pred_class = nb.predict(X_test_dtm)
-    # print(nb.predict(vect.transform(testcase())))
-    print(metrics.accuracy_score(y_test, y_pred_class))
-
-
-# Linear SVC
-def _c_try():
-    features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv')
-
-    # define X, y
-
-    X = stack_data.title
-    y = stack_data.p_num
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
-
-    vect = CountVectorizer(lowercase=True, stop_words='english')
-
-    vect.fit(X_train)
-
-    # transform training data
-    X_train_dtm = vect.fit_transform(X_train)
-    X_test_dtm = vect.transform(X_test)
-
-    lsv = LinearSVC()
-
-    lsv.fit(X_train_dtm, y_train)
-    y_pred_class = lsv.predict(X_test_dtm)
-    print('hey')
-    print(metrics.accuracy_score(y_test, y_pred_class))
-
-    #print(X_test.shape, X_test_dtm.shape, X_train_dtm.shape, X_train.shape)
-
-# Random forest
-def _d_try():
-    features = ['p_lang', 'title', 'p_num']
-    stack_data = pd.read_csv('./data_set.csv')
-
-    # define X, y
-    X = stack_data.title
-    y = stack_data.p_num
-
-    X_train, X_test, y_train, y_test = train_test_split(X, y, random_state=2)
-
-    vect = CountVectorizer(lowercase=True, stop_words='english')
-
-    vect.fit(X_train)
-
-    # transform training data
-    X_train_dtm = vect.fit_transform(X_train)
-    y_train_dtm = vect.fit_transform(y_train)
-    X_test_dtm = vect.transform(X_test)
-
-    rf = RandomForestClassifier(n_estimators= 1000, random_state= 40)
-    rf.fit(X_train_dtm, y_train_dtm)
-    prediction = rf.predict(X_test)
-    print(prediction)
-
-    #scores = cross_validate(rf, X_train_dtm, y_train_dtm, cv=100, return_train_score=True)
-
-    #print(scores)
+    print("accuracy score - Logistic regression : " + str(model.score(X_test, y_test)))
+    print('Confusion Matrix - Logistic regression - ', '\n', metrics.confusion_matrix(y_test,clas_pred))
+    # print('Classification Report - Decision Tree - ','\n',classification_report(y_test,clas_pred))
 
 
 # logistic regression
-def _l_try():
-    features = ['p_lang', 'title', 'p_num']
+"""
+def __logistic_regression(df):
     stack_data = pd.read_csv('./data_set.csv')
 
     # define X, y
@@ -209,25 +167,23 @@ def _l_try():
 
     nb.fit(X_train_dtm, y_train)
     y_pred_class = nb.predict(X_test_dtm)
-    # print(nb.predict(vect.transform(testcase())))
+    print(nb.predict(vect.transform(test_case())))
 
     print(metrics.accuracy_score(y_test, y_pred_class))
+"""
 
 
-
-
-def testcase():
-    return pd.DataFrame({'title': ['how baby girl, whatcha doing tonight?']}, index=[i for i in range(len(['how baby girl, whatcha doing tonight?']))])
+def test_case():
+    return pd.DataFrame({'title': ["Does Python have a string 'contains' substring method?"]}, index=[i for i in range(len(["Does Python have a string 'contains' substring method?"]))])
 
 
 if __name__ == "__main__":
-
     df = pd.read_csv("data_set.csv")
-    print('Sample analysis -')
-    # multinomial(df)
-    _c_try()
-    # _d_try()
-    _l_try()
-    __try()
-    # linear_svc(df)
-    # decision_tree(df)
+    print('Classifiers -')
+
+    print(logistic_regression(df))
+    # csd = ClassifyStackData('./data_set.csv', 'title', 'p_num', [''])
+
+    # print(csd.multinomial_nb())
+    # print(csd.logistic_regression())
+    # print(csd.linear_svc())

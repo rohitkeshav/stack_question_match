@@ -1,6 +1,10 @@
 import html
 import time
 import random
+import pandas as pd
+from similiarity import cosine
+from classification import linear_svc
+from classi import Linear_SVC
 
 from settings import SITE
 from utils import store_as_csv, read_from_csv
@@ -56,14 +60,33 @@ def parse_and_store(tag):
 
 
 def run(ques):
-    language_list = ['python', 'c++', 'c', 'java', 'javascript', 'bash']
+    """
+        Scraping data
+    """
+    # language_list = ['python', 'c++', 'c', 'java', 'javascript', 'bash']
+    #
+    # for ll in language_list:
+    #     parse_and_store(ll)
 
-    for ll in language_list:
-        parse_and_store(ll)
+    df = pd.read_csv("data_set.csv")
+    pred_tag = Linear_SVC(df, ques)
 
-    print('done')
-    # print(cosine.tf_idf(read_from_csv(), check_with=ques))
-    # print(cosine.tf_idf(read_from_csv(), check_with=ques))
+    retval = cosine.tf_idf(read_from_csv(filter_this=pred_tag), check_with=ques)
+
+    with open('f_data.pickle', 'rb') as handle:
+        b = pickle.load(handle)
+
+    # webbrowser.open(b[retval[0]]['url'])
+    for i in retval:
+        webbrowser.open_new_tab(b[i]['url'])
 
 
-# input_ques = input('Enter Question? \n')
+import pickle
+import webbrowser
+if __name__ == '__main__':
+    input_ques = input('Enter Question? \n')
+
+    run(ques='what is abstract classes in Java?')
+    # run(input_ques)
+
+    # webbrowser.open('http://google.com')

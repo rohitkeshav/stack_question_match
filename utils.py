@@ -3,6 +3,7 @@ import nltk
 import time
 import random
 import string
+import hashlib
 import requests
 
 from bs4 import BeautifulSoup
@@ -29,13 +30,20 @@ def get_doc_tokens(doc, j_tokens=False):
     return token_count
 
 
-def read_from_csv(filename='/data_set.csv'):
+import pickle
+def read_from_csv(filter_this, filename='/data_set.csv'):
     docs = list()
+    d_dict = dict()
 
     with open(BASE_DIR + filename, 'r', encoding='utf-8') as f:
         q_a = csv.DictReader(f)
         for line in q_a:
-            docs.append(line['title'])
+            if line['p_lang'] == filter_this:
+                docs.append(line['title'])
+                d_dict[line['title']] = {'url': line['link']}
+
+    with open('f_data.pickle', 'wb') as handle:
+        pickle.dump(d_dict, file=handle, protocol=pickle.HIGHEST_PROTOCOL)
 
     return docs
 
