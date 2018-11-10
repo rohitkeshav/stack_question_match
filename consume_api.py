@@ -97,7 +97,10 @@ def run(ques):
         webbrowser.open_new_tab(b[i]['url'])
 
 
-if __name__ == '__main__':
-    input_ques = input('Enter Question? \n')
-
-    run(ques='what is abstract classes in Java?')
+"""
+    Sample Usage
+"""
+# if __name__ == '__main__':
+#     input_ques = input('Enter Question? \n')
+#
+#     run(ques='what is abstract classes in Java?')

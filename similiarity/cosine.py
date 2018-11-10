@@ -6,6 +6,7 @@ from scipy.spatial import distance
 
 
 # TF_IDF on the list of docs
+# there definitely a better of doing this
 def tf_idf(docs, check_with=None):
 
     if check_with is not None:
