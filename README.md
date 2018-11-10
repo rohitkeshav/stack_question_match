@@ -2,6 +2,8 @@
 The aim of this project was to replicate StackOverflow’s similar questions section, also play-around/get acquainted with NLP and ML algorithms
 Base assumption: All titles are questions
 
+Authors - Anandu Anilkumar, Rohit Keshav
+
 ## How?
 There are 2 core components to this API
    * Cosine Similarity module
