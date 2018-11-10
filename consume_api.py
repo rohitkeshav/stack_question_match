@@ -1,6 +1,7 @@
 import html
 import time
 import random
+import argparse
 import pandas as pd
 from similiarity import cosine
 from classi import Linear_SVC
@@ -100,7 +101,10 @@ def run(ques):
 """
     Sample Usage
 """
-# if __name__ == '__main__':
-#     input_ques = input('Enter Question? \n')
-#
-#     run(ques='what is abstract classes in Java?')
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser()
+    parser.add_argument("query")
+    args = parser.parse_args()
+
+    # run(ques='what is abstract classes in Java?')
+    run(ques=args.query)
