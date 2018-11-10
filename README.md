@@ -4,8 +4,8 @@ Base assumption: All titles are questions
 
 ## How?
 There are 2 core components to this API
-    * Cosine Similarity module
-    * Classifier
+   * Cosine Similarity module
+   * Classifier
 
 Implemented machine learning classifier along with a similarity algorithm to classify a user’s question 
 with the aim to replicate StackOverflow’s similar questions section results
