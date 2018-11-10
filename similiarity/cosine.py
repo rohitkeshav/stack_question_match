@@ -7,8 +7,7 @@ from scipy.spatial import distance
 
 # TF_IDF on the list of docs
 def tf_idf(docs, check_with=None):
-    # Process all documents to get list of token list
-    # TODO: apparently not a hack
+    
     if check_with is not None:
         docs.insert(0, check_with)
 
