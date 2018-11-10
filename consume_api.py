@@ -3,18 +3,22 @@ import time
 import random
 import pandas as pd
 from similiarity import cosine
-from classification import linear_svc
 from classi import Linear_SVC
 
 from settings import SITE
 from utils import store_as_csv, read_from_csv
+import pickle
+import webbrowser
 
 """
 .csv format - title | user | up-votes | tags
 """
 
 
-def __question(tag, up_votes):
+def __question(tag):
+    """
+    :return: question object with params such as title, description etc.
+    """
 
     params = ('fromdate', 'todate')
     set_to = [(1262347200, 1293796800), (1293883200, 1325332800),
@@ -26,8 +30,10 @@ def __question(tag, up_votes):
     data = list()
 
     for st in set_to:
-        data.extend(SITE.fetch('questions/', tagged=tag, sort='votes', min=up_votes, max_pages=1000,
+        data.extend(SITE.fetch('questions/', tagged=tag, sort='votes', max_pages=1000,
                                **dict(zip(params, st))).get('items', []))
+
+        # or your IP gets banned
         time.sleep(random.randrange(0, 10))
 
     for question_object in data:
@@ -36,8 +42,13 @@ def __question(tag, up_votes):
 
 # Parse API and store in CSV
 def parse_and_store(tag):
+    """
+    stores the data in a csv as well
+    :param tag: primary filters - ['python', 'c++', 'c', 'java', 'javascript', 'bash']
+    :return: list of dictionaries, as per the tag
+    """
     ret_val = list()
-    n_row = __question(tag, 20)
+    n_row = __question(tag)
 
     header_list = ['title', 'tags', 'creation_date', 'username', 'up_votes', 'link', 'p_lang']
 
@@ -54,20 +65,26 @@ def parse_and_store(tag):
         except StopIteration:
             break
 
+    # stores it into data_set.csv
     store_as_csv(header_list, ret_val)
 
     return ret_val
+
+
+def scrape():
+    # get these tags only
+    language_list = ['python', 'c++', 'c', 'java', 'javascript', 'bash']
+
+    for ll in language_list:
+        parse_and_store(ll)
 
 
 def run(ques):
     """
         Scraping data
     """
-    # language_list = ['python', 'c++', 'c', 'java', 'javascript', 'bash']
-    #
-    # for ll in language_list:
-    #     parse_and_store(ll)
 
+    scrape()
     df = pd.read_csv("data_set.csv")
     pred_tag = Linear_SVC(df, ques)
 
@@ -76,17 +93,11 @@ def run(ques):
     with open('f_data.pickle', 'rb') as handle:
         b = pickle.load(handle)
 
-    # webbrowser.open(b[retval[0]]['url'])
     for i in retval:
         webbrowser.open_new_tab(b[i]['url'])
 
 
-import pickle
-import webbrowser
 if __name__ == '__main__':
     input_ques = input('Enter Question? \n')
 
     run(ques='what is abstract classes in Java?')
-    # run(input_ques)
-
-    # webbrowser.open('http://google.com')

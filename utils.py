@@ -3,14 +3,16 @@ import nltk
 import time
 import random
 import string
-import hashlib
 import requests
+import pickle
 
 from bs4 import BeautifulSoup
 from settings import BASE_DIR
-from string import punctuation
 from nltk.corpus import stopwords
-from collections import Counter
+
+"""
+    Useful standalone functions for the project
+"""
 
 
 # tokenize a doc
@@ -30,7 +32,6 @@ def get_doc_tokens(doc, j_tokens=False):
     return token_count
 
 
-import pickle
 def read_from_csv(filter_this, filename='/data_set.csv'):
     docs = list()
     d_dict = dict()

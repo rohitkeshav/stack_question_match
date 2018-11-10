@@ -1,19 +1,14 @@
 import numpy as np
 import pandas as pd
 
-from utils import get_doc_tokens, tag_plus_title
+from utils import get_doc_tokens
 from scipy.spatial import distance
-from sklearn.feature_extraction.text import TfidfVectorizer, CountVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
-from sklearn.model_selection import train_test_split
-from sklearn.naive_bayes import MultinomialNB
-from sklearn import metrics
 
 
 # TF_IDF on the list of docs
 def tf_idf(docs, check_with=None):
     # Process all documents to get list of token list
-    # TODO: apparently not a hacks
+    # TODO: apparently not a hack
     if check_with is not None:
         docs.insert(0, check_with)
 
