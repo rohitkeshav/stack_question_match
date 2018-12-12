@@ -19,7 +19,7 @@ with the aim to replicate StackOverflow’s similar questions section results
    4. ```python consume_api.py <query>```
 
 ###### Example Usage
-    ```python consume_api.py "what are abstract classes in Java?"```
+    python consume_api.py "what are abstract classes in Java?"
 
 ###### Ongoing
    * Building a test module under classification.py, that would test out different machine classifier algorithms 
