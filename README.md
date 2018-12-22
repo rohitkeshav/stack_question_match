@@ -1,4 +1,4 @@
-# StackOverflow Similar Question recommendation clone
+# StackOverflow Similar Question recommendation-system clone
 The aim of this project was to replicate StackOverflow’s similar questions section, also play-around/get acquainted with NLP and ML algorithms
 Base assumption: All titles are questions
 
